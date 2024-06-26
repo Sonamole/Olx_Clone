@@ -10,6 +10,7 @@ export const FirebaseContext=createContext(null) //This calls the createContext 
 export default function Context({children})//In React, children is a special prop that represents any nested elements between the opening and closing tags of the component.
     {
         const [user,setUser] = useState(null) //null in tutorial
+
         return(
             <AuthContext.Provider value={{ user,setUser }}>
                  {/* The 'children' prop represents any components nested(inside) within this Context component.

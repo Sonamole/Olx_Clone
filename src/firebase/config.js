@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import  'firebase/auth'; // Import Firebase Authentication
 import 'firebase/firestore'; // Import Firebase Firestore
+import 'firebase/storage';//Importing the Firebase Storage module,Eg:File uploads
 
 
 

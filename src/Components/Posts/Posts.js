@@ -1,9 +1,28 @@
-import React from 'react';
+import React,{useEffect,useContext,useState} from 'react';
+import {FirebaseContext} from '../../store/Context'
 
 import Heart from '../../assets/Heart';
 import './Post.css';
 
 function Posts() {
+
+const firebase=useContext(FirebaseContext)
+
+
+const [products,setProducts]=useState([])
+
+useEffect(()=>{ //snapshot is just a name.you can anything here
+  firebase.firestore().collection('products').get().then((snapshot)=>{
+     const allPost=snapshot.docs.map((product)=>{ //docs is an array of objects inside it
+        return {//data is a functio,n in firebase to get a data of a document
+          ...product.data(),
+           id:product.id
+        }
+     })
+    // console.log(allPost);
+    setProducts(allPost)
+  })
+})
 
   return (
     <div className="postParentDiv">
@@ -13,9 +32,9 @@ function Posts() {
           <span>View more</span>
         </div>
         <div className="cards">
-          <div
-            className="card"
-          >
+          <div className="card">
+
+
             <div className="favorite">
               <Heart></Heart>
             </div>
@@ -38,22 +57,37 @@ function Posts() {
           <span>Fresh recommendations</span>
         </div>
         <div className="cards">
-          <div className="card">
-            <div className="favorite">
-              <Heart></Heart>
-            </div>
-            <div className="image">
-              <img src="../../../Images/R15V3.jpg" alt="" />
-            </div>
-            <div className="content">
-              <p className="rate">&#x20B9; 250000</p>
-              <span className="kilometer">Two Wheeler</span>
-              <p className="name"> YAMAHA R15V3</p>
-            </div>
-            <div className="date">
-              <span>10/5/2021</span>
-            </div>
-          </div>
+
+{
+
+products.map(product=>{
+
+  return(
+   <div className="card">
+   <div className="favorite">
+     <Heart></Heart>
+   </div>
+   <div className="image">
+     <img src={product.url}alt="" />
+   </div>
+   <div className="content">
+     <p className="rate">&#x20B9; {product.price}</p>
+     <span className="kilometer">{product.category}</span>
+     <p className="name"> {product.name}</p>
+   </div>
+   <div className="date">
+     <span>{product.createdAt}</span>
+   </div>
+ </div>
+  )
+
+
+})
+
+}
+
+
+
         </div>
       </div>
     </div>
