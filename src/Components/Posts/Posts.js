@@ -3,18 +3,24 @@ import {FirebaseContext} from '../../store/Context'
 
 import Heart from '../../assets/Heart';
 import './Post.css';
+import {PostContext}  from '../../store/PostContext';
+import { useHistory } from 'react-router-dom';
+
+
 
 function Posts() {
 
 const firebase=useContext(FirebaseContext)
+const {setPostDetails}=useContext(PostContext)
 
+const history=useHistory()
 
 const [products,setProducts]=useState([])
 
 useEffect(()=>{ //snapshot is just a name.you can anything here
   firebase.firestore().collection('products').get().then((snapshot)=>{
      const allPost=snapshot.docs.map((product)=>{ //docs is an array of objects inside it
-        return {//data is a functio,n in firebase to get a data of a document
+        return {//data is a method in firebase to get a data of a document
           ...product.data(),
            id:product.id
         }
@@ -24,6 +30,22 @@ useEffect(()=>{ //snapshot is just a name.you can anything here
   })
 })
 
+// firebase.firestore() gets an instance of Firestore (a NoSQL database from Firebase).
+// .collection('products') accesses the 'products' collection in Firestore.
+// .get() retrieves all the documents from the 'products' collection.
+// .then((snapshot) => { ... }) waits for the data to be fetched and then runs the function inside once the data is available.
+// const allPost = snapshot.docs.map((product) => { ... })
+
+// snapshot.docs is an array of documents retrieved from the 'products' collection.
+// .map((product) => { ... }) iterates over each document in the array, transforming each document into a new format defined inside the function.
+// return { ...product.data(), id: product.id }
+
+// product.data() is a function that returns all the data of the document as an object.
+// { ...product.data(), id: product.id } creates a new object that combines all the data from the document (...product.data()) and adds a new key-value pair with the document's id (id: product.id).
+
+
+
+
   return (
     <div className="postParentDiv">
       <div className="moreView">
@@ -32,24 +54,42 @@ useEffect(()=>{ //snapshot is just a name.you can anything here
           <span>View more</span>
         </div>
         <div className="cards">
-          <div className="card">
+
+        {
+
+products.map(product=>{
+
+  return(
+   <div className="card" onClick={()=>{
+
+    setPostDetails(product)
+    history.push('/view')
+   }}>
+
+   <div className="favorite">
+     <Heart></Heart>
+   </div>
+   <div className="image">
+     <img src={product.url}alt="" />
+   </div>
+   <div className="content">
+     <p className="rate">&#x20B9; {product.price}</p>
+     <span className="kilometer">{product.category}</span>
+     <p className="name"> {product.name}</p>
+   </div>
+   <div className="date">
+     <span>{product.createdAt}</span>
+   </div>
+ </div>
+  )
 
 
-            <div className="favorite">
-              <Heart></Heart>
-            </div>
-            <div className="image">
-              <img src="../../../Images/R15V3.jpg" alt="" />
-            </div>
-            <div className="content">
-              <p className="rate">&#x20B9; 250000</p>
-              <span className="kilometer">Two Wheeler</span>
-              <p className="name"> YAMAHA R15V3</p>
-            </div>
-            <div className="date">
-              <span>Tue May 04 2021</span>
-            </div>
-          </div>
+})
+
+}
+
+
+
         </div>
       </div>
       <div className="recommendations">

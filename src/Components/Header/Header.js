@@ -15,7 +15,7 @@ function Header() {
   const firebase =useContext(FirebaseContext)
 
   const history=useHistory()
-  console.log('header name',user);
+  // console.log('header name',user);
   return (
     <div className="headerParentDiv">
       <div className="headerChildDiv">
@@ -43,7 +43,7 @@ function Header() {
           <Arrow></Arrow>
         </div>
         <div className="loginPage">
-          <span>{user ? ` Welcome ${user.displayName}`: 'Login'}</span>
+          <span>{user ? ` Welcome ${user.displayName}`: <Link to='/login'>Login</Link>}</span>
           <hr />
 
         </div>
