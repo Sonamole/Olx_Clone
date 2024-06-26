@@ -1,25 +1,39 @@
-// Import React and the useState hook from the 'react' library
-import React, { useState,useContext } from 'react';
+import React, { useState,useContext } from 'react';// Import React and the useState hook from the 'react' library
 import Logo from '../../olx-logo.png';
 import './Signup.css';
-import { FirebaseContext } from '../../store/FirebaseContext';
+import { useHistory } from 'react-router-dom';
+import { FirebaseContext } from '../../store/Context';
+import  firebase  from '../../firebase/config';
+import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 
 
 export default function Signup() {
   // Declare state variables and their setters using the useState hook
+
+  const history=useHistory()//useHistory hook, you can programmatically control the navigation within your React application. returns the history object, which has methods like push, replace, and others for navigating programmatically.
+
   const [username, setUsername] = useState(''); // State for username, initially empty string
   const [email, setEmail] = useState('');       // State for email, initially empty string
   const [phone, setPhone] = useState('');       // State for phone, initially empty string
   const [password, setPassword] = useState(''); // State for password, initially empty string
 
-  const {Firebase}=useContext(FirebaseContext) //Use the useContext hook to access the value provided by FirebaseContext
+  const firebase=useContext(FirebaseContext) //Use the useContext hook to access the value provided by FirebaseContext
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent form from submitting the default way
-    // console.log(Firebase);
-    Firebase.auth().createUserWithEmailAndPassword(email,password).then((result)=>{
-      result.user.updateProfile({displayName:username})
+    // console.log(firebase);
+    firebase.auth().createUserWithEmailAndPassword(email,password).then((result)=>{//THis calls the Firebase authentications servive and creates a new user account holding and result.user gave access to the newly created user object
+      result.user.updateProfile({displayName:username}).then(()=>{ ////The methods and properties provided by the Firebase API, such as auth(), createUserWithEmailAndPassword, updateProfile, and displayName, cannot be renamed. These names are fixed as they are defined by Firebase and are necessary for the API to function correctly.      // result.user gives access to the newly created user object.updateProfile({ displayName: username }): This method updates the user's profile information.{ displayName: username }:An object containing the new profile information to be set.displayName is a property of the user's profile, set to the value of the username variable.
+        firebase.firestore().collection('users').add({
+          id:result.user.uid,
+          username:username,
+          phone:phone
+        }).then(()=>{
+              history.push("/login")
+        })
 
+
+      })
     })
   }
 
@@ -76,7 +90,8 @@ export default function Signup() {
           <br />
           <button type="submit">Signup</button>
         </form>
-        <a href="/login">Login</a>
+<Link to ='/login'>Login</Link>
+
       </div>
     </div>
   );
